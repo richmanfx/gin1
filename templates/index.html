@@ -1,0 +1,17 @@
+<!--index.html-->
+
+<!-- Шаблон хедера -->
+{{ template "header.html" .}}
+
+    <h1>Привет, HAM!</h1>
+
+    <p>
+        <a href="/vhfdx">
+            Скрапинг VHFDX.RU
+        </a>
+    </p>
+    <p>
+        <h1>{{ .fromVhfdx }}</h1>
+    </p>
+<!-- Шаблон футера -->
+{{ template "footer.html" .}}

@@ -23,9 +23,14 @@ func scrapVhfdx(context *gin.Context)  {
 	var webDriver selenium.WebDriver
 	var err error
 
+	//caps := selenium.Capabilities{
+	//	"browserName":            "firefox",
+	//	"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+	//}
+
 	caps := selenium.Capabilities{
-		"browserName":            "firefox",
-		"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+		"browserName":           "phantomjs",
+		"phantomjs.binary.path": "/usr/local/bin/phantomjs",
 	}
 
 	webDriver, err  = selenium.NewRemote(caps, "")
@@ -35,7 +40,7 @@ func scrapVhfdx(context *gin.Context)  {
 	}
 	defer webDriver.Quit()
 
-	webDriver.MaximizeWindow("1000x800")
+	webDriver.MaximizeWindow("")
 
 	// Get simple playground interface
 	webDriver.Get("http://www.vhfdx.ru")
@@ -67,7 +72,7 @@ func scrapVhfdx(context *gin.Context)  {
 
 
 	var title, _ = webDriver.Title()
-	time.Sleep(20 * time.Second)
+	time.Sleep(10 * time.Second)
 
 
 	context.HTML(http.StatusOK, "index.html", gin.H{

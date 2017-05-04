@@ -1,0 +1,12 @@
+<!-- Шаблон хедера -->
+{{ template "header.html" .}}
+
+<h1>Таблица участников полевого дня</h1>
+    {{ range .callStrings }}
+
+        {{ . }}<br>
+
+    {{end}}
+
+<!-- Шаблон футера -->
+{{ template "footer.html" .}}

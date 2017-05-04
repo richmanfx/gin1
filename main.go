@@ -16,6 +16,10 @@ func main() {
 	// Загрузить шаблоны
 	Router.LoadHTMLGlob("templates/*")
 
+	// Загрузить статику
+	Router.Static("/css", "css")
+	Router.Static("/js", "js")
+
 	// Проинитить роуты
 	modules.InitRoutes(Router)
 

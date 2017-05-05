@@ -2,25 +2,33 @@
 {{ template "header.html" .}}
 
 <h1>Участники полевого дня, {{ .contestantCount }} человек</h1>
-<table border="1">
+<table class="table1">
     <tr>
-        <th>N</th>
-        <th>Позывной</th>
-        <th>Квадрат</th>
-        <th colspan="6">Диапазоны</th>
-        <th>Дополнительная информация</th>
+        <th rowspan="2" class="center-align">N</th>
+        <th rowspan="2" class="center-align">Позывной</th>
+        <th rowspan="2" class="center-align">Квадрат</th>
+        <th colspan="6" class="center-align">Диапазоны</th>
+        <th rowspan="2" class="center-align">Дополнительная информация</th>
+    </tr>
+    <tr>
+        <th class="center-align band">2м</th>
+        <th class="center-align band">70см</th>
+        <th class="center-align band">23см</th>
+        <th class="center-align band">5см</th>
+        <th class="center-align band">3см</th>
+        <th class="center-align band">1.2см</th>
     </tr>
     {{ range .contestant }}
     <tr>
-        <td>{{ .ID }}</td>
+        <td class="center-align">{{ .ID }}</td>
         <td>{{ .Call }}</td>
         <td>{{ .QRA }}</td>
-        <td>{{ .Band_2m }}</td>
-        <td>{{ .Band_70cm }}</td>
-        <td>{{ .Band_23cm }}</td>
-        <td>{{ .Band_5cm }}</td>
-        <td>{{ .Band_3cm }}</td>
-        <td>{{ .Band_1cm }}</td>
+        <td class="center-align">{{ .Band_2m }}</td>
+        <td class="center-align">{{ .Band_70cm }}</td>
+        <td class="center-align">{{ .Band_23cm }}</td>
+        <td class="center-align">{{ .Band_5cm }}</td>
+        <td class="center-align">{{ .Band_3cm }}</td>
+        <td class="center-align">{{ .Band_1cm }}</td>
         <td>{{ .Info }}</td>
     </tr>
     {{end}}

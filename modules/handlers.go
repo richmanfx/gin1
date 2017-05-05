@@ -181,37 +181,37 @@ func makeBandMatrix(allContestant []string) []string {
 		if strings.Contains(bands, "144МГц") {
 			bandString += "2м"
 		} else {
-			bandString += "-"
+			bandString += " "
 		}
 
 		if strings.Contains(bands, "432МГц") {
 			bandString += "||70см"
 		} else {
-			bandString += "||-"
+			bandString += "|| "
 		}
 
 		if strings.Contains(bands, "1296МГц") {
 			bandString += "||23см"
 		} else {
-			bandString += "||-"
+			bandString += "|| "
 		}
 
 		if strings.Contains(bands, "5.7ГГц") {
 			bandString += "||5см"
 		} else {
-			bandString += "||-"
+			bandString += "|| "
 		}
 
 		if strings.Contains(bands, "10ГГц") {
 			bandString += "||3м"
 		} else {
-			bandString += "||-"
+			bandString += "|| "
 		}
 
 		if strings.Contains(bands, "24ГГц") {
 			bandString += "||1.2см"
 		} else {
-			bandString += "||-"
+			bandString += "|| "
 		}
 
 		outputStringWithBandMatrix = append(outputStringWithBandMatrix,

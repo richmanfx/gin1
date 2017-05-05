@@ -1,12 +1,30 @@
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
 
-<h1>Таблица участников полевого дня</h1>
-    {{ range .callStrings }}
-
-        {{ . }}<br>
-
+<h1>Участники полевого дня, {{ .contestantCount }} человек</h1>
+<table border="1">
+    <tr>
+        <th>N</th>
+        <th>Позывной</th>
+        <th>Квадрат</th>
+        <th colspan="6">Диапазоны</th>
+        <th>Дополнительная информация</th>
+    </tr>
+    {{ range .contestant }}
+    <tr>
+        <td>{{ .ID }}</td>
+        <td>{{ .Call }}</td>
+        <td>{{ .QRA }}</td>
+        <td>{{ .Band_2m }}</td>
+        <td>{{ .Band_70cm }}</td>
+        <td>{{ .Band_23cm }}</td>
+        <td>{{ .Band_5cm }}</td>
+        <td>{{ .Band_3cm }}</td>
+        <td>{{ .Band_1cm }}</td>
+        <td>{{ .Info }}</td>
+    </tr>
     {{end}}
+</table>
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}

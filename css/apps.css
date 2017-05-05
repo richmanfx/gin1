@@ -35,34 +35,15 @@ th {
 }
 
 
-
-/*
-.table2 {
-    border: 1px solid black;
-    padding: 1px;
-    width: 80%;
-}
-
-.table3 {
-    border: 1px solid #555555;
-    padding: 1px;
-    width: 80%;
-}
-
-
-td {
-    border: 1px solid black;
+footer {
+    text-align: center;
     padding: 1em;
+    
+    .container {            
+        height: 110px;
+        padding: 10px;
+    }
 }
-
-.table_padding td {
-    padding-top: 1px;
-    padding-bottom: 1px;
-}
-
-*/
-
-
 
 p {
     text-align: center;

@@ -28,18 +28,24 @@ func scrapVhfdx(context *gin.Context)  {
 	var webDriver selenium.WebDriver
 	var err error
 
-	caps := selenium.Capabilities{
-		"browserName":            "firefox",
-		"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+	var browser string
+	browser = "phantom"		// Закомментировать для запуска chrome
+	var caps selenium.Capabilities
+
+	if browser == "phantom" {
+		caps = selenium.Capabilities{
+			"browserName":           "phantomjs",
+			"phantomjs.binary.path": "/usr/local/bin/phantomjs",
+		}
+	} else {
+		caps = selenium.Capabilities{
+			"browserName":            "firefox",
+			"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+		}
 	}
-	//
-	//caps := selenium.Capabilities{
-	//	"browserName":           "phantomjs",
-	//	"phantomjs.binary.path": "/usr/local/bin/phantomjs",
-	//}
+
 
 	webDriver, err  = selenium.NewRemote(caps, "")
-
 	if err != nil {
 		panic(err)
 	}
@@ -47,42 +53,36 @@ func scrapVhfdx(context *gin.Context)  {
 
 	webDriver.MaximizeWindow("")
 
-	//// На сайт
-	//webDriver.Get("http://www.vhfdx.ru")
-	//time.Sleep(2 * time.Second)
-	//
-	//// Переходим на страницу Полевого дня.
-	//btn, _ := webDriver.FindElement(selenium.ByXPATH, "//a[@href='http://www.vhfdx.ru/field_day']")
-	//btn.Click()
-	//
-	//time.Sleep(2 * time.Second)
-	//
-	//// Переходим на страницу с таблицей участников.
-	//btn, _ = webDriver.FindElement(selenium.ByXPATH, "//a[contains(text(),'Таблица участников')]")
-	//btn.Click()
-	//time.Sleep(2 * time.Second)
-
-
-	webDriver.SetAsyncScriptTimeout(10 * time.Second)		// Таймаут ожидания элемента
-
-	webDriver.Get("http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/")
-	time.Sleep(2 * time.Second)
+	fmt.Println("Переход на страницу участников")
+	err = webDriver.Get("http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/")
+	time.Sleep(5 * time.Second)
+	if err != nil {
+		panic(err)
+	}
 
 	// Проверяем отображение страницы с таблицей участников.
-	btn, _ := webDriver.FindElement(selenium.ByXPATH, "//title[contains(text(),'Российский УКВ портал - ПД  2016')]")
-	btn.Click()
-	time.Sleep(2 * time.Second)
+	fmt.Println("Проверяем отображение страницы с таблицей участников")
+	//btn, _ := webDriver.FindElement(selenium.ByXPATH, "//title[contains(text(),'Российский УКВ портал - ПД  2016')]")
+	btn, err := webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
+	if err != nil {
+		panic(err)
+	}
+	time.Sleep(3 * time.Second)
 
 	// Отсортировать по позывному
-	btn, _ = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_30.call']")
+	fmt.Println("Отсортировать по позывному")
+	btn, err = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_30.call']")
+	if err != nil {
+		panic(err)
+	}
 	btn.Click()
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
 
 
 	// Все строки с позывными со всех страниц в слайс
-
 	maxCountContestant := 200		// Максмальное количество участников соревнований, слайс растянется при необходимости
 	overallResult := make([]string, 0, maxCountContestant)
+
 	for {
 		// Считать данные с одной страницы
 		var contestantStrings []string = readDateFromPage(webDriver)
@@ -98,20 +98,41 @@ func scrapVhfdx(context *gin.Context)  {
 		}
 
 		// Перейти на следующую страницу если есть ссылка
+		fmt.Println("Проверка наличия ссылки на Следующую страницу")
 		var _, err = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
+		time.Sleep(5 * time.Second)
 
 		if err == nil {
 			// Переходим на следующую страницу.
+			fmt.Println("Переходим на Следующую страницу")
 			btn, _ = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
-			btn.Click()
-			time.Sleep(5 * time.Second)
+			err = btn.Click()
+			if err != nil {
+				panic(err)
+			}
+			time.Sleep(7 * time.Second)
+
+			// Проверяем отображение страницы с таблицей участников.
+			count := 10
+			for i:=0; i<count; i++ {
+				fmt.Printf("Проверяем отображение страницы с таблицей участников. Попытка N%d\n", i+1)
+				btn, err = webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
+				if err == nil {
+					break
+				}
+			}
+			if err != nil {
+				fmt.Println("Не отобразилась следующая страница.")
+				panic(err)
+			}
+
 		} else {
+			fmt.Println("Нет ссылки на Следующую страницу")
 			break
 		}
 	}
 
 	var title, _ = webDriver.Title()
-	//time.Sleep(10 * time.Second)
 
 	// Закрыть браузер
 	webDriver.Quit()
@@ -229,25 +250,43 @@ func makeBandMatrix(allContestant []string) []string {
 func readDateFromPage(webDriver selenium.WebDriver) []string{
 
 	callsOnPage := 100		// Максимальное лоличество позывных на одной страниц
+	var err error
+
 	// Позывные
 	callElements := make([]selenium.WebElement, callsOnPage)
-	callElements, _ = webDriver.FindElements(selenium.ByXPATH,
+	fmt.Println("Считываем позывные")
+	callElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'call')]",)
+	if err != nil {
+		panic(err)
+	}
 
 	// Квадраты
 	qraElements := make([]selenium.WebElement, callsOnPage)
-	qraElements, _ = webDriver.FindElements(selenium.ByXPATH,
+	fmt.Println("Считываем квадраты")
+	qraElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'qra')]")
+	if err != nil {
+		panic(err)
+	}
 
 	// Диапазоны
 	bandsElements := make([]selenium.WebElement, callsOnPage)
-	bandsElements, _ = webDriver.FindElements(selenium.ByXPATH,
+	fmt.Println("Считываем диапазоны")
+	bandsElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'band')]")
+	if err != nil {
+		panic(err)
+	}
 
 	// Дополнительная информация
 	infoElements := make([]selenium.WebElement, callsOnPage)
-	infoElements, _ = webDriver.FindElements(selenium.ByXPATH,
+	fmt.Println("Считываем дополнительную информацию")
+	infoElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'info')]")
+	if err != nil {
+		panic(err)
+	}
 
 
 	result := make([]string, callsOnPage)

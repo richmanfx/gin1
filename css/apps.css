@@ -38,8 +38,7 @@ th {
 footer {
     text-align: center;
     padding: 1em;
-    
-    .container {            
+    .container {
         height: 110px;
         padding: 10px;
     }

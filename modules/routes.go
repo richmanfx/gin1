@@ -8,7 +8,7 @@ func InitRoutes(router *gin.Engine) {
 
 	// Роутинг главной страницы: метод, путь -> обработчик
 
-	router.Handle("GET", "/", showIndexPage)
-	router.Handle("GET","vhfdx", scrapVhfdx)
+	router.Handle("GET", "/go", showIndexPage)
+	router.Handle("GET","/go/vhfdx", scrapVhfdx)
 
 }

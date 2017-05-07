@@ -10,6 +10,11 @@ import (
 var Router *gin.Engine
 
 func main() {
+
+	// Режим работы gin - на продакшене делать "ReleaseMode"
+	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
+
 	// Роутер по-умолчанию в Gin
 	Router = gin.Default()
 

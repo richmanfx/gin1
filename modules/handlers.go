@@ -9,7 +9,10 @@ import (
 	"fmt"
 	"strconv"
 	"../models"
+	log "github.com/Sirupsen/logrus"
+	"os"
 )
+
 
 func showIndexPage(context *gin.Context)  {
 
@@ -24,6 +27,10 @@ func showIndexPage(context *gin.Context)  {
 }
 
 func scrapVhfdx(context *gin.Context)  {
+
+	log.SetOutput(os.Stdout)				// В консоль
+	log.SetLevel(log.InfoLevel)				// Уровень логирования
+	log.SetFormatter(&log.TextFormatter{})	// Текстовые логи
 
 	var webDriver selenium.WebDriver
 	var err error
@@ -53,7 +60,7 @@ func scrapVhfdx(context *gin.Context)  {
 
 	webDriver.MaximizeWindow("")
 
-	fmt.Println("Переход на страницу участников")
+	log.Info("Переход на страницу участников")
 	err = webDriver.Get("http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/")
 	time.Sleep(5 * time.Second)
 	if err != nil {
@@ -61,7 +68,7 @@ func scrapVhfdx(context *gin.Context)  {
 	}
 
 	// Проверяем отображение страницы с таблицей участников.
-	fmt.Println("Проверяем отображение страницы с таблицей участников")
+	log.Info("Проверяем отображение страницы с таблицей участников")
 	//btn, _ := webDriver.FindElement(selenium.ByXPATH, "//title[contains(text(),'Российский УКВ портал - ПД  2016')]")
 	btn, err := webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
 	if err != nil {
@@ -70,7 +77,7 @@ func scrapVhfdx(context *gin.Context)  {
 	time.Sleep(3 * time.Second)
 
 	// Отсортировать по позывному
-	fmt.Println("Отсортировать по позывному")
+	log.Info("Отсортировать по позывному")
 	btn, err = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_30.call']")
 	if err != nil {
 		panic(err)
@@ -98,13 +105,13 @@ func scrapVhfdx(context *gin.Context)  {
 		}
 
 		// Перейти на следующую страницу если есть ссылка
-		fmt.Println("Проверка наличия ссылки на Следующую страницу")
+		log.Info("Проверка наличия ссылки на Следующую страницу")
 		var _, err = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
 		time.Sleep(5 * time.Second)
 
 		if err == nil {
 			// Переходим на следующую страницу.
-			fmt.Println("Переходим на Следующую страницу")
+			log.Info("Переходим на Следующую страницу")
 			btn, _ = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
 			err = btn.Click()
 			if err != nil {
@@ -115,19 +122,19 @@ func scrapVhfdx(context *gin.Context)  {
 			// Проверяем отображение страницы с таблицей участников.
 			count := 10
 			for i:=0; i<count; i++ {
-				fmt.Printf("Проверяем отображение страницы с таблицей участников. Попытка N%d\n", i+1)
+				log.Infof("Проверяем отображение страницы с таблицей участников. Попытка N%d", i+1)
 				btn, err = webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
 				if err == nil {
 					break
 				}
 			}
 			if err != nil {
-				fmt.Println("Не отобразилась следующая страница.")
+				log.Info("Не отобразилась следующая страница.")
 				panic(err)
 			}
 
 		} else {
-			fmt.Println("Нет ссылки на Следующую страницу")
+			log.Info("Нет ссылки на Следующую страницу")
 			break
 		}
 	}
@@ -254,7 +261,7 @@ func readDateFromPage(webDriver selenium.WebDriver) []string{
 
 	// Позывные
 	callElements := make([]selenium.WebElement, callsOnPage)
-	fmt.Println("Считываем позывные")
+	log.Info("Считываем позывные")
 	callElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'call')]",)
 	if err != nil {
@@ -263,7 +270,7 @@ func readDateFromPage(webDriver selenium.WebDriver) []string{
 
 	// Квадраты
 	qraElements := make([]selenium.WebElement, callsOnPage)
-	fmt.Println("Считываем квадраты")
+	log.Info("Считываем квадраты")
 	qraElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'qra')]")
 	if err != nil {
@@ -272,7 +279,7 @@ func readDateFromPage(webDriver selenium.WebDriver) []string{
 
 	// Диапазоны
 	bandsElements := make([]selenium.WebElement, callsOnPage)
-	fmt.Println("Считываем диапазоны")
+	log.Info("Считываем диапазоны")
 	bandsElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'band')]")
 	if err != nil {
@@ -281,7 +288,7 @@ func readDateFromPage(webDriver selenium.WebDriver) []string{
 
 	// Дополнительная информация
 	infoElements := make([]selenium.WebElement, callsOnPage)
-	fmt.Println("Считываем дополнительную информацию")
+	log.Info("Считываем дополнительную информацию")
 	infoElements, err = webDriver.FindElements(selenium.ByXPATH,
 		"//tr[@class='oddrow0 fabrik_row ' or @class='oddrow1 fabrik_row ']/td[contains(@class,'info')]")
 	if err != nil {

@@ -3,8 +3,8 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"./modules"
+	"github.com/gin-gonic/gin"
 )
 
 var Router *gin.Engine

@@ -34,14 +34,18 @@ th {
     width: 3em;
 }
 
-
 footer {
     text-align: center;
     padding: 1em;
-    .container {
-        height: 110px;
-        padding: 10px;
-    }
+    /*.container {*/
+        /*height: 110px;*/
+        /*padding: 10px;*/
+    /*}*/
+}
+
+.container {
+    height: 110px;
+    padding: 10px;
 }
 
 p {

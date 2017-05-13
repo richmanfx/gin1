@@ -1,16 +1,16 @@
 package modules
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"github.com/tebeka/selenium"
-	"time"
-	"strings"
-	"fmt"
-	"strconv"
 	"../models"
+	"fmt"
 	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
+	"github.com/tebeka/selenium"
+	"net/http"
 	"os"
+	"strconv"
+	"strings"
+	"time"
 )
 
 

@@ -11,5 +11,8 @@ type Contestant struct {
 	Band_5cm	string
 	Band_3cm	string
 	Band_1cm	string
+	QRB			int
+	Azi			int
+	ReversAzi	int
 	Info		string
 }

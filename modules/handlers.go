@@ -153,16 +153,12 @@ func scrapVhfdx(context *gin.Context)  {
 	// Генерация матрицы диапазонов
 	overallResult = makeBandMatrix(overallResult)
 
-	// Вычисление расстояния
-
-	// Вычисление азимута
-
-	// Вычисление обратного азимута
-
 	// Получить всех участников
 	contestantCount := len(overallResult)	// Количесво участников
 	contestantList := make([]models.Contestant, contestantCount)
-	toHTMLTable(overallResult, contestantList)
+
+	// Заполнить HTML таблицу информацией об участниках, QRB и азимутами
+	toHTMLTable(overallResult, contestantList, myQRA)
 
 	context.HTML(
 		http.StatusOK,
@@ -178,7 +174,7 @@ func scrapVhfdx(context *gin.Context)  {
 
 
 // Внести данные об участнике в структуру для контекста темплейта
-func toHTMLTable(allContestant []string, contestantList []models.Contestant) {
+func toHTMLTable(allContestant []string, contestantList []models.Contestant, myQRA string) {
 	for idx, str := range allContestant {
 		contestantList[idx].ID, _ = strconv.Atoi(strings.Split(str, "||")[0])
 		contestantList[idx].Call = strings.Split(str, "||")[1]
@@ -189,6 +185,8 @@ func toHTMLTable(allContestant []string, contestantList []models.Contestant) {
 		contestantList[idx].Band_5cm = strings.Split(str, "||")[6]
 		contestantList[idx].Band_3cm = strings.Split(str, "||")[7]
 		contestantList[idx].Band_1cm = strings.Split(str, "||")[8]
+		contestantList[idx].QRB = QRBFromQRA(myQRA, strings.Split(str, "||")[2])
+		contestantList[idx].Azi, contestantList[idx].ReversAzi = AzimuthsFromQRA(myQRA, strings.Split(str, "||")[2])
 		contestantList[idx].Info = strings.Split(str, "||")[9]
 	}
 }

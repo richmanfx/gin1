@@ -32,11 +32,15 @@ func scrapVhfdx(context *gin.Context)  {
 	log.SetLevel(log.InfoLevel)				// Уровень логирования
 	log.SetFormatter(&log.TextFormatter{})	// Текстовые логи
 
+	// Квадрат из формы
+	myQRA := context.PostForm("my_qra")
+	log.Infof("Получен myQRA: %s", myQRA)
+
 	var webDriver selenium.WebDriver
 	var err error
 
 	var browser string
-	browser = "phantom"		// Закомментировать для запуска chrome
+	//browser = "phantom"		// Закомментировать для запуска chrome
 	var caps selenium.Capabilities
 
 	if browser == "phantom" {
@@ -164,9 +168,10 @@ func scrapVhfdx(context *gin.Context)  {
 		http.StatusOK,
 		"vhfdx.html",
 		gin.H{
-			"title": title,
+			"title":           title,
+			"myQRA":           myQRA,
 			"contestantCount": contestantCount,
-			"contestant": contestantList,
+			"contestant":      contestantList,
 		},
 	)
 }

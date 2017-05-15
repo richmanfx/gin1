@@ -3,15 +3,18 @@
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
 
-    <h1>Привет, HAM!</h1>
+    <form method="post" action="/go/vhfdx">
+        <input autofocus="true" id="id_my_qra" maxlength="30" name="my_qra" placeholder="Введите свой квадрат QRA"
+               required="required" type="text">
 
-    <p>
-        <a href="/go/vhfdx">
-            Участники ПД на VHFDX.RU
-        </a>
-    </p>
-    <p>
-        <h1>{{ .fromVhfdx }}</h1>
-    </p>
+        <br>
+        <button id="btn-ok" type="submit" class="btn btn-success">
+            Получить список участников ПД
+        </button>
+    </form>
+
+    <br>
+    <a href="/go/vhfdx">Участники ПД на VHFDX.RU</a>
+
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}

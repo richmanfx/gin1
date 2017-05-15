@@ -44,7 +44,6 @@ footer {
 }
 
 .container {
-    height: 110px;
     padding: 10px;
 }
 
@@ -108,7 +107,7 @@ a:hover {
 }
 
 #btn-ok {
-	font-size: 5rem;
+	font-size: 2em;
 }
 
 #id_my_file {
@@ -146,7 +145,7 @@ label {
 }
 */
 input {
-    font-size: 5rem;
+    font-size: 2em;
 }
 
 
@@ -191,7 +190,7 @@ h5 {
  ******************************************************************************/
 form {
 	color: #000000;
-	font-size: 5rem;
+	font-size: 1em;
 }
 
 sup {

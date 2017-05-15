@@ -9,6 +9,9 @@
         <th rowspan="2" class="center-align">Позывной</th>
         <th rowspan="2" class="center-align">Квадрат</th>
         <th colspan="6" class="center-align">Диапазоны</th>
+        <th rowspan="2" class="center-align">QRB (км)</th>
+        <th rowspan="2" class="center-align">Азимут (град.)</th>
+        <th rowspan="2" class="center-align">Обратный азимут (град.)</th>
         <th rowspan="2" class="center-align">Дополнительная информация</th>
     </tr>
     <tr>
@@ -30,6 +33,9 @@
         <td class="center-align">{{ .Band_5cm }}</td>
         <td class="center-align">{{ .Band_3cm }}</td>
         <td class="center-align">{{ .Band_1cm }}</td>
+        <td class="text-right">{{ .QRB }}</td>
+        <td class="text-right">{{ .Azi }}</td>
+        <td class="text-right">{{ .ReversAzi }}</td>
         <td>{{ .Info }}</td>
     </tr>
     {{end}}

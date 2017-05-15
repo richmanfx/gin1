@@ -234,7 +234,7 @@ func makeBandMatrix(allContestant []string) []string {
 		}
 
 		if strings.Contains(bands, "10ГГц") {
-			bandString += "||3м"
+			bandString += "||3см"
 		} else {
 			bandString += "|| "
 		}

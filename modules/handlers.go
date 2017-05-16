@@ -40,7 +40,7 @@ func scrapVhfdx(context *gin.Context)  {
 	var err error
 
 	var browser string
-	//browser = "phantom"		// Закомментировать для запуска chrome
+	browser = "phantom"		// Закомментировать для запуска chrome
 	var caps selenium.Capabilities
 
 	if browser == "phantom" {
@@ -124,10 +124,11 @@ func scrapVhfdx(context *gin.Context)  {
 			time.Sleep(7 * time.Second)
 
 			// Проверяем отображение страницы с таблицей участников.
-			count := 10
+			count := 5
 			for i:=0; i<count; i++ {
 				log.Infof("Проверяем отображение страницы с таблицей участников. Попытка N%d", i+1)
 				btn, err = webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
+				time.Sleep(5* time.Second)
 				if err == nil {
 					break
 				}

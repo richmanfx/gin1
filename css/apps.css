@@ -15,6 +15,7 @@ div {
 .table1 {
 	border: 1px solid black;
 	width: 100%;
+    font-size: medium;
 }
 
 td {
@@ -24,7 +25,7 @@ td {
 th {
     /*background: #ffaaaa;*/
     border: 1px black solid; /* стиль рамки заголовков */
-} 
+}
 
 .center-align {
     text-align: center;
@@ -37,14 +38,10 @@ th {
 footer {
     text-align: center;
     padding: 1em;
-    /*.container {*/
-        /*height: 110px;*/
-        /*padding: 10px;*/
-    /*}*/
-}
-
-.container {
-    padding: 10px;
+    .container {
+        height: 110px;
+        padding: 10px;
+    }
 }
 
 p {

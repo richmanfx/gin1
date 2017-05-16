@@ -3,25 +3,28 @@
 
 <h1>Участники полевого дня, {{ .contestantCount }} человек</h1>
 <p>Свой QRA: {{ .myQRA }}</p>
-<table class="table1">
-    <tr>
-        <th rowspan="2" class="center-align">N</th>
-        <th rowspan="2" class="center-align">Позывной</th>
-        <th rowspan="2" class="center-align">Квадрат</th>
-        <th colspan="6" class="center-align">Диапазоны</th>
-        <th rowspan="2" class="center-align">QRB (км)</th>
-        <th rowspan="2" class="center-align">Азимут (град.)</th>
-        <th rowspan="2" class="center-align">Обратный азимут (град.)</th>
-        <th rowspan="2" class="center-align">Дополнительная информация</th>
-    </tr>
-    <tr>
-        <th class="center-align band">2м</th>
-        <th class="center-align band">70см</th>
-        <th class="center-align band">23см</th>
-        <th class="center-align band">5см</th>
-        <th class="center-align band">3см</th>
-        <th class="center-align band">1.2см</th>
-    </tr>
+<table class="tablesorter table1" id="hamTable">
+    <thead>
+        <tr>
+            <th rowspan="2" class="center-align">N</th>
+            <th rowspan="2" class="center-align">Позывной</th>
+            <th rowspan="2" class="center-align">Квадрат</th>
+            <th colspan="6" class="center-align">Диапазоны</th>
+            <th rowspan="2" class="center-align">QRB (км)</th>
+            <th rowspan="2" class="center-align">Азимут (град.)</th>
+            <th rowspan="2" class="center-align">Обратный азимут (град.)</th>
+            <th rowspan="2" class="center-align">Дополнительная информация</th>
+        </tr>
+        <tr>
+            <th class="center-align band">2м</th>
+            <th class="center-align band">70см</th>
+            <th class="center-align band">23см</th>
+            <th class="center-align band">5см</th>
+            <th class="center-align band">3см</th>
+            <th class="center-align band">1.2см</th>
+        </tr>
+    </thead>
+    <tbody>
     {{ range .contestant }}
     <tr>
         <td class="center-align">{{ .ID }}</td>
@@ -39,6 +42,7 @@
         <td>{{ .Info }}</td>
     </tr>
     {{end}}
+    </tbody>
 </table>
 
 <!-- Шаблон футера -->

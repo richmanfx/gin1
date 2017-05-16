@@ -1,6 +1,95 @@
 package modules
 
-import "strings"
+import (
+	"math"
+	"strings"
+)
+
+
+// Вычисляет прямой и обратный азимуты для двух квадратов
+func AzimuthsFromQRA(qra1 string, qra2 string) (int, int) {
+	lat1, long1 := QraToLatLong(qra1)
+	lat2, long2 := QraToLatLong(qra2)
+	azi, revAzi := Azimuths(lat1, long1, lat2, long2)
+	return azi, revAzi
+}
+
+// Вычисляет прямой и обратный азимуты в градусах двух точек с координатами в градусах.
+func Azimuths(lat1, long1, lat2, long2 float64) (int, int) {
+
+	//var EarthRadius float64 = 6372795.0			// Радиус Земли в метрах
+
+	// В радианы
+	lat1 = DegreesToRadians(lat1)
+	lat2 = DegreesToRadians(lat2)
+	long1 = DegreesToRadians(long1)
+	long2 = DegreesToRadians(long2)
+
+	// Косинусы и синусы широт и разницы долгот
+	cosLat1 := math.Cos(lat1)
+	cosLat2 := math.Cos(lat2)
+	sinLat1 := math.Sin(lat1)
+	sinLat2 := math.Sin(lat2)
+	longDelta := long2 - long1
+	cosLongDelta := math.Cos(longDelta)
+	sinLongDelta := math.Sin(longDelta)
+
+	// Начальный азимут
+	x := cosLat1 * sinLat2 - sinLat1 * cosLat2 * cosLongDelta
+	y := sinLongDelta * cosLat2
+	z := RadiansToDegrees(math.Atan(-y/x))
+
+	if x < 0 {
+		z = z + 180.0
+	}
+	var z2 float64 = float64(int(z + 180.0) % 360 - 180)
+	z2 = -1 * DegreesToRadians(z2)
+
+	var azimuth int = int(RadiansToDegrees(z2 - (2*math.Pi*math.Floor(z2/(2*math.Pi)))))
+	var reverseBearing int
+	if azimuth < 180 {
+		reverseBearing = azimuth + 180
+	} else {
+		reverseBearing = azimuth - 180
+	}
+
+	return azimuth, reverseBearing
+}
+
+
+// Вычисляет QRB в километрах между двумя точками с координатами в градусах.
+func QRBFromDegrees(lat1, long1, lat2, long2 float64) int {
+
+	k1 := math.Cos(DegreesToRadians(lat1)) *
+			math.Cos(DegreesToRadians(lat2)) *
+			math.Cos(DegreesToRadians(math.Abs(long1-long2)))
+
+	k2 := math.Sin(DegreesToRadians(lat1)) * math.Sin(DegreesToRadians(lat2))
+
+	qrb := 111.25 * RadiansToDegrees(math.Acos(k1 + k2))
+
+	return int(qrb)
+}
+
+// Вычисляет QRB в километрах между двумя QRA квадратами
+func QRBFromQRA(qra1 string, qra2 string) int {
+
+	lat1, long1 := QraToLatLong(qra1)
+	lat2, long2 := QraToLatLong(qra2)
+	qrb := QRBFromDegrees(lat1, long1, lat2, long2)
+	return qrb
+}
+
+// Получает градусы, возвращает радианы
+func DegreesToRadians(degrees float64) float64 {
+	return degrees * math.Pi / 180
+}
+
+// Получает радианы, возвращае градусы
+func RadiansToDegrees(radians float64) float64 {
+	return radians * 180 / math.Pi
+}
+
 
 
 // Получает квадрат QRA, возвращает широту и долготу в градусах

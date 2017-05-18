@@ -40,7 +40,7 @@ func scrapVhfdx(context *gin.Context)  {
 
 	// Проверка валидности введённого квадрата
 	log.Info("Проверяем валидность введённого квадрата")
-	err = checkQRA(myQRA)
+	err = CheckQRA(myQRA)
 	if err != nil {
 		context.HTML(
 			http.StatusOK,

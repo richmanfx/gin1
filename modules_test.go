@@ -7,6 +7,48 @@ import (
 )
 
 
+// Тест валидатора checkQRA()
+func TestCheckQRA(t *testing.T) {
+
+	type TestQraValues struct {
+		expectedResult	bool
+		QRA 			string
+	}
+
+	var testQraSlice = make([]TestQraValues, 0, 9)
+
+	testQraSlice = append(testQraSlice,
+		TestQraValues{expectedResult: true, QRA: "KO85sp"},
+		TestQraValues{true, "ko85sp"},
+		TestQraValues{true, "ko85SP"},
+		TestQraValues{true, "kO85sP"},
+		TestQraValues{false, "ko85s"},
+		TestQraValues{false, "ko8Asp"},
+		TestQraValues{false, "1o85sp"},
+		TestQraValues{false, "123456"},
+		TestQraValues{false, "abcdef"},
+		TestQraValues{false, ""},
+	)
+
+	// Пробежать по всем данным
+	for _, testQraItem := range testQraSlice {
+
+		var result bool = true
+		var actualResult error
+
+		actualResult = modules.CheckQRA(testQraItem.QRA)
+
+		if actualResult != nil {
+			result = false
+		}
+
+		if result != testQraItem.expectedResult {
+			t.Errorf("Неверная валидация квадрата %s: ожидалось %v.", testQraItem.QRA, testQraItem.expectedResult)
+		}
+	}
+}
+
+
 // Тест для QRBFromDegrees()
 func TestLatLongToQRA(t *testing.T) {
 

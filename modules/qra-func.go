@@ -8,7 +8,7 @@ import (
 )
 
 // Проверяет валидность введённого QRA
-func checkQRA(qra string) error {
+func CheckQRA(qra string) error {
 
 	qra = strings.ToUpper(qra)
 	var result error = nil

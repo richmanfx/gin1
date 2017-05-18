@@ -36,142 +36,157 @@ func scrapVhfdx(context *gin.Context)  {
 	myQRA := context.PostForm("my_qra")
 	log.Infof("Получен myQRA: %s", myQRA)
 
-	var webDriver selenium.WebDriver
 	var err error
 
-	var browser string
-	browser = "phantom"		// Закомментировать для запуска chrome
-	var caps selenium.Capabilities
-
-	if browser == "phantom" {
-		caps = selenium.Capabilities{
-			"browserName":           "phantomjs",
-			"phantomjs.binary.path": "/usr/local/bin/phantomjs",
-		}
+	// Проверка валидности введённого квадрата
+	log.Info("Проверяем валидность введённого квадрата")
+	err = checkQRA(myQRA)
+	if err != nil {
+		context.HTML(
+			http.StatusOK,
+			"message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": fmt.Sprintf("%s: ", err),
+				"message3": myQRA,
+			},
+		)
 	} else {
-		caps = selenium.Capabilities{
-			"browserName":            "firefox",
-			"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+
+		var webDriver selenium.WebDriver
+
+		var browser string
+		browser = "phantom" // Закомментировать для запуска chrome
+		var caps selenium.Capabilities
+
+		if browser == "phantom" {
+			caps = selenium.Capabilities{
+				"browserName":           "phantomjs",
+				"phantomjs.binary.path": "/usr/local/bin/phantomjs",
+			}
+		} else {
+			caps = selenium.Capabilities{
+				"browserName":            "firefox",
+				"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+			}
 		}
-	}
 
+		webDriver, err = selenium.NewRemote(caps, "")
+		if err != nil {
+			panic(err)
+		}
+		defer webDriver.Quit()
 
-	webDriver, err  = selenium.NewRemote(caps, "")
-	if err != nil {
-		panic(err)
-	}
-	defer webDriver.Quit()
+		webDriver.MaximizeWindow("")
 
-	webDriver.MaximizeWindow("")
+		log.Info("Переход на страницу участников")
+		err = webDriver.Get("http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/")
+		time.Sleep(5 * time.Second)
+		if err != nil {
+			panic(err)
+		}
 
-	log.Info("Переход на страницу участников")
-	err = webDriver.Get("http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/")
-	time.Sleep(5 * time.Second)
-	if err != nil {
-		panic(err)
-	}
+		// Проверяем отображение страницы с таблицей участников.
+		log.Info("Проверяем отображение страницы с таблицей участников")
+		//btn, _ := webDriver.FindElement(selenium.ByXPATH, "//title[contains(text(),'Российский УКВ портал - ПД  2016')]")
+		btn, err := webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
+		if err != nil {
+			panic(err)
+		}
+		time.Sleep(3 * time.Second)
 
-	// Проверяем отображение страницы с таблицей участников.
-	log.Info("Проверяем отображение страницы с таблицей участников")
-	//btn, _ := webDriver.FindElement(selenium.ByXPATH, "//title[contains(text(),'Российский УКВ портал - ПД  2016')]")
-	btn, err := webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
-	if err != nil {
-		panic(err)
-	}
-	time.Sleep(3 * time.Second)
+		// Отсортировать по позывному
+		log.Info("Отсортировать по позывному")
+		btn, err = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_30.call']")
+		if err != nil {
+			panic(err)
+		}
+		btn.Click()
+		time.Sleep(3 * time.Second)
 
-	// Отсортировать по позывному
-	log.Info("Отсортировать по позывному")
-	btn, err = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_30.call']")
-	if err != nil {
-		panic(err)
-	}
-	btn.Click()
-	time.Sleep(3 * time.Second)
+		// Все строки с позывными со всех страниц в слайс
+		maxCountContestant := 200 // Максмальное количество участников соревнований, слайс растянется при необходимости
+		overallResult := make([]string, 0, maxCountContestant)
 
+		for {
+			// Считать данные с одной страницы
+			var contestantStrings []string = readDateFromPage(webDriver)
 
-	// Все строки с позывными со всех страниц в слайс
-	maxCountContestant := 200		// Максмальное количество участников соревнований, слайс растянется при необходимости
-	overallResult := make([]string, 0, maxCountContestant)
+			// Добавить к общему результату всех страниц
+			for _, str := range contestantStrings {
+				if str != "" {
+					//fmt.Println(str)
+					overallResult = append(overallResult, str)
+				} else {
+					break
+				}
+			}
 
-	for {
-		// Считать данные с одной страницы
-		var contestantStrings []string = readDateFromPage(webDriver)
+			// Перейти на следующую страницу если есть ссылка
+			log.Info("Проверка наличия ссылки на Следующую страницу")
+			var _, err= webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
+			time.Sleep(5 * time.Second)
 
-		// Добавить к общему результату всех страниц
-		for _, str := range contestantStrings {
-			if str != "" {
-				//fmt.Println(str)
-				overallResult = append(overallResult, str)
+			if err == nil {
+				// Переходим на следующую страницу.
+				log.Info("Переходим на Следующую страницу")
+				btn, _ = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
+				err = btn.Click()
+				if err != nil {
+					panic(err)
+				}
+				time.Sleep(7 * time.Second)
+
+				// Проверяем отображение страницы с таблицей участников.
+				count := 5
+				for i := 0; i < count; i++ {
+					log.Infof("Проверяем отображение страницы с таблицей участников. Попытка N%d", i+1)
+					btn, err = webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
+					time.Sleep(5 * time.Second)
+					if err == nil {
+						break
+					}
+				}
+				if err != nil {
+					log.Info("Не отобразилась следующая страница.")
+					panic(err)
+				}
+
 			} else {
+				log.Info("Нет ссылки на Следующую страницу")
 				break
 			}
 		}
 
-		// Перейти на следующую страницу если есть ссылка
-		log.Info("Проверка наличия ссылки на Следующую страницу")
-		var _, err = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
-		time.Sleep(5 * time.Second)
+		var title, _= webDriver.Title()
 
-		if err == nil {
-			// Переходим на следующую страницу.
-			log.Info("Переходим на Следующую страницу")
-			btn, _ = webDriver.FindElement(selenium.ByXPATH, "//a[@class='pagenav' and @title='Следующая']")
-			err = btn.Click()
-			if err != nil {
-				panic(err)
-			}
-			time.Sleep(7 * time.Second)
+		// Закрыть браузер
+		webDriver.Quit()
 
-			// Проверяем отображение страницы с таблицей участников.
-			count := 5
-			for i:=0; i<count; i++ {
-				log.Infof("Проверяем отображение страницы с таблицей участников. Попытка N%d", i+1)
-				btn, err = webDriver.FindElement(selenium.ByXPATH, "//table[@class='adminlist']")
-				time.Sleep(5* time.Second)
-				if err == nil {
-					break
-				}
-			}
-			if err != nil {
-				log.Info("Не отобразилась следующая страница.")
-				panic(err)
-			}
+		/// Обработка результатов
+		// Генерация матрицы диапазонов
+		overallResult = makeBandMatrix(overallResult)
 
-		} else {
-			log.Info("Нет ссылки на Следующую страницу")
-			break
-		}
+		// Получить всех участников
+		contestantCount := len(overallResult) // Количесво участников
+		contestantList := make([]models.Contestant, contestantCount)
+
+		// Заполнить HTML таблицу информацией об участниках, QRB и азимутами
+		toHTMLTable(overallResult, contestantList, myQRA)
+
+		context.HTML(
+			http.StatusOK,
+			"vhfdx.html",
+			gin.H{
+				"title":           title,
+				"myQRA":           myQRA,
+				"contestantCount": contestantCount,
+				"contestant":      contestantList,
+			},
+		)
 	}
-
-	var title, _ = webDriver.Title()
-
-	// Закрыть браузер
-	webDriver.Quit()
-
-
-	/// Обработка результатов
-	// Генерация матрицы диапазонов
-	overallResult = makeBandMatrix(overallResult)
-
-	// Получить всех участников
-	contestantCount := len(overallResult)	// Количесво участников
-	contestantList := make([]models.Contestant, contestantCount)
-
-	// Заполнить HTML таблицу информацией об участниках, QRB и азимутами
-	toHTMLTable(overallResult, contestantList, myQRA)
-
-	context.HTML(
-		http.StatusOK,
-		"vhfdx.html",
-		gin.H{
-			"title":           title,
-			"myQRA":           myQRA,
-			"contestantCount": contestantCount,
-			"contestant":      contestantList,
-		},
-	)
 }
+
 
 
 // Внести данные об участнике в структуру для контекста темплейта

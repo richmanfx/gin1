@@ -1,9 +1,25 @@
 package modules
 
 import (
+	"fmt"
 	"math"
+	"regexp"
 	"strings"
 )
+
+// Проверяет валидность введённого QRA
+func checkQRA(qra string) error {
+
+	qra = strings.ToUpper(qra)
+	var result error = nil
+
+	// Первая буква от A до R?
+	match, _ := regexp.MatchString("[A-R]{2}\\d{2}[A-X]{2}", qra)
+	if !match {
+		result = fmt.Errorf("Введён неверный формат квадрата QRA")
+	}
+	return result
+}
 
 
 // Вычисляет прямой и обратный азимуты для двух квадратов

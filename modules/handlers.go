@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+var version string = "1.5"
 
 func showIndexPage(context *gin.Context)  {
 
@@ -22,6 +23,7 @@ func showIndexPage(context *gin.Context)  {
 		"index.html",
 		gin.H{
 			"title": "Главная страница",
+			"version": version,
 		},
 	)
 }
@@ -49,6 +51,7 @@ func scrapVhfdx(context *gin.Context)  {
 				"title": "Ошибка",
 				"message1": fmt.Sprintf("%s: ", err),
 				"message3": myQRA,
+				"version": version,
 			},
 		)
 	} else {
@@ -182,6 +185,7 @@ func scrapVhfdx(context *gin.Context)  {
 				"myQRA":           myQRA,
 				"contestantCount": contestantCount,
 				"contestant":      contestantList,
+				"version": version,
 			},
 		)
 	}

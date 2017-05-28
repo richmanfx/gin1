@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var version string = "1.5"
+var version string = "1.6"
 
 func showIndexPage(context *gin.Context)  {
 
@@ -28,15 +28,26 @@ func showIndexPage(context *gin.Context)  {
 	)
 }
 
-func scrapVhfdx(context *gin.Context)  {
+func fieldDayContestant(context *gin.Context)  {
+	link := "http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/"
+	myQRA := context.PostForm("my_qra_fd")		// Квадрат из формы
+	log.Infof("Получен myQRA: %s", myQRA)
+	scrapVhfdx(context, link, myQRA)
+}
+
+
+func RussiaСhampionshipContestant(context *gin.Context)  {
+	link := "http://www.vhfdx.ru/component/option,com_fabrik/Itemid,312/"
+	myQRA := context.PostForm("my_qra_cup")		// Квадрат из формы
+	log.Infof("Получен myQRA: %s", myQRA)
+	scrapVhfdx(context, link, myQRA)
+}
+
+func scrapVhfdx(context *gin.Context, link string, myQRA string)  {
 
 	log.SetOutput(os.Stdout)				// В консоль
 	log.SetLevel(log.InfoLevel)				// Уровень логирования
 	log.SetFormatter(&log.TextFormatter{})	// Текстовые логи
-
-	// Квадрат из формы
-	myQRA := context.PostForm("my_qra")
-	log.Infof("Получен myQRA: %s", myQRA)
 
 	var err error
 
@@ -83,7 +94,7 @@ func scrapVhfdx(context *gin.Context)  {
 		webDriver.MaximizeWindow("")
 
 		log.Info("Переход на страницу участников")
-		err = webDriver.Get("http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/")
+		err = webDriver.Get(link)
 		time.Sleep(5 * time.Second)
 		if err != nil {
 			panic(err)
@@ -102,7 +113,10 @@ func scrapVhfdx(context *gin.Context)  {
 		log.Info("Отсортировать по позывному")
 		btn, err = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_30.call']")
 		if err != nil {
-			panic(err)
+			btn, err = webDriver.FindElement(selenium.ByXPATH, "//th/a[@id='farbikOrder_jos_fabrik_formdata_25.call']")
+			if err != nil {
+				panic(err)
+			}
 		}
 		btn.Click()
 		time.Sleep(3 * time.Second)

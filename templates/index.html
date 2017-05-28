@@ -2,15 +2,31 @@
 
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
-    <form method="post" action="/go/vhfdx">
-        <input autofocus="true" id="id_my_qra" maxlength="30" name="my_qra" placeholder="Введите свой квадрат QRA"
-               required="required" type="text">
 
-        <br>
-        <button id="btn-ok" type="submit" class="btn btn-success">
-            Получить список участников ПД
-        </button>
+        <form method="post" action="/go/fd">
+            <fieldset>
+                <legend>Полевой день</legend>
+                <input autofocus="true" id="id_my_qra_fd" maxlength="6" name="my_qra_fd" placeholder=" Введи свой квадрат QRA"
+                       required="required" type="text">
+                <button type="submit" class="btn btn-success">
+                   Получить список участников
+                </button>
+            </fieldset>
+        </form>
+
+    <br><hr><br>
+
+    <form method="post" action="/go/russia-cup">
+        <fieldset>
+            <legend>Чемпионат России</legend>
+            <input autofocus="true" id="id_my_qra_cup" maxlength="6" name="my_qra_cup" placeholder=" Введи свой квадрат QRA"
+                   required="required" type="text">
+            <button type="submit" class="btn btn-success">
+               Получить список участников
+            </button>
+        </fieldset>
     </form>
+
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}

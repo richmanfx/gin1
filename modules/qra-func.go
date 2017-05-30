@@ -21,6 +21,13 @@ func CheckQRA(qra string) error {
 	return result
 }
 
+// Преобразовывает введённый QRA в "красивый" вид - две первые буквы заглавные, а последние прописные.
+func TransformQRA(qra string) string {
+	bigSymbols := strings.ToUpper(qra[0:2])
+	smallSymbols := strings.ToLower(qra[4:])
+	transQra := bigSymbols + qra[2:4] + smallSymbols
+	return transQra
+}
 
 // Вычисляет прямой и обратный азимуты для двух квадратов
 func AzimuthsFromQRA(qra1 string, qra2 string) (int, int) {

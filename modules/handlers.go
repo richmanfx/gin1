@@ -28,6 +28,7 @@ func showIndexPage(context *gin.Context)  {
 	)
 }
 
+// Обрабатывает страницу Полевого дня
 func fieldDayContestant(context *gin.Context)  {
 	link := "http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/"
 	myQRA := context.PostForm("my_qra_fd")		// Квадрат из формы
@@ -35,7 +36,7 @@ func fieldDayContestant(context *gin.Context)  {
 	scrapVhfdx(context, link, myQRA)
 }
 
-
+// Обрабатывает страницу Чемпионата России
 func RussiaСhampionshipContestant(context *gin.Context)  {
 	link := "http://www.vhfdx.ru/component/option,com_fabrik/Itemid,312/"
 	myQRA := context.PostForm("my_qra_cup")		// Квадрат из формы
@@ -76,12 +77,15 @@ func scrapVhfdx(context *gin.Context, link string, myQRA string)  {
 		if browser == "phantom" {
 			caps = selenium.Capabilities{
 				"browserName":           "phantomjs",
-				"phantomjs.binary.path": "/usr/local/bin/phantomjs",
+				//"phantomjs.binary.path": "/usr/local/bin/phantomjs",
+				"phantomjs.binary.path": "C:\\Windows\\phantomjs.exe",
 			}
 		} else {
 			caps = selenium.Capabilities{
 				"browserName":            "firefox",
-				"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+				//"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
+				"webdriver.gecko.driver": "C:\\Program Files\\mozilla\\geckodriver.exe",
+
 			}
 		}
 
@@ -187,6 +191,10 @@ func scrapVhfdx(context *gin.Context, link string, myQRA string)  {
 		// Получить всех участников
 		contestantCount := len(overallResult) // Количесво участников
 		contestantList := make([]models.Contestant, contestantCount)
+
+		// Преобразовать введённый QRA в "красивый" вид
+		myQRA = TransformQRA(myQRA)
+		log.Infof("Преобразованный QRA: %s", myQRA)
 
 		// Заполнить HTML таблицу информацией об участниках, QRB и азимутами
 		toHTMLTable(overallResult, contestantList, myQRA)

@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var version string = "1.6"
+var version string = "1.7"
 
 func showIndexPage(context *gin.Context)  {
 
@@ -77,14 +77,14 @@ func scrapVhfdx(context *gin.Context, link string, myQRA string)  {
 		if browser == "phantom" {
 			caps = selenium.Capabilities{
 				"browserName":           "phantomjs",
-				//"phantomjs.binary.path": "/usr/local/bin/phantomjs",
-				"phantomjs.binary.path": "C:\\Windows\\phantomjs.exe",
+				"phantomjs.binary.path": "/usr/local/bin/phantomjs",			// Linux
+				//"phantomjs.binary.path": "C:\\Windows\\phantomjs.exe",		// Windows
 			}
 		} else {
 			caps = selenium.Capabilities{
 				"browserName":            "firefox",
-				//"webdriver.gecko.driver": "/usr/local/bin/geckodriver",
-				"webdriver.gecko.driver": "C:\\Program Files\\mozilla\\geckodriver.exe",
+				"webdriver.gecko.driver": "/usr/local/bin/geckodriver",							// Linux
+				//"webdriver.gecko.driver": "C:\\Program Files\\mozilla\\geckodriver.exe",		// Windows
 
 			}
 		}

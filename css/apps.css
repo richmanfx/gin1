@@ -98,6 +98,12 @@ a:hover {
 	font-size: 2rem;
 }
 
+#msgModal {
+    border-width: 2px;
+    color: #000000;
+    font-size: 2rem;
+}
+
 #headerModal {
 	color: #0000ff;
 	font-weight: bold;
@@ -218,6 +224,30 @@ sup {
 /*      border-insets: 1 1 1 1, 0;	*/
 }
 
+.button2 {
+    color: #ffffff;
+    background-color: #777777;
+    /* padding: 5 22 5 22;		*/
+    border: 1pt #00ffff;
+    /* font-family: Consolas;	*/
+    font-size: 12pt;
+}
+
+.button2:hover {
+    background-color: #449d9d;
+    color: #ffff00;
+}
+
+.button2:focus
+{
+    background-color: #00a0a0;
+    color: #ff0000;
+    border: 1pt solid #ffffff;
+    border-radius: 0 0;
+    /*      border-insets: 1 1 1 1, 0;	*/
+}
+
+
 a.button1 {
 	font-weight: 700;
 	font-size: 3rem;
@@ -281,50 +311,4 @@ span.dictCheckbox {
 
 .dictCheckbox input[type=checkbox]:checked + label {
     background: #00FF00;
-}
-
-.hidescreen,
-.load_page {
- position: fixed;
- display: none; /* Изначально блоки скрыты */
-}
-.hidescreen {
- z-index: 9998; 
- width: 100%;
- height: 100%;
- background: #000000;
- opacity: 0.7;
- filter: alpha(opacity=70);
- left:0;
- top:0;
-}
-.load_page {
- z-index: 9999; /* Значение должно быть больше, чем для .hidescreen */
- left: 50%;
- top: 50%;
- background: #ffffff;
- padding: 30px 10px;
- text-align: center;
- font: normal normal 15px Verdana;
- border-radius: 3px;
- margin-left: -125px;
- width: 250px;
-}
-.close { 
- position: absolute;
- top: 10px;
- right: 10px; 
- border: 1px solid #666; 
- border-radius: 2px; 
- font: normal bold 12px/14px Comic Sans MS; 
- text-align: center; 
- background: #FFF; 
- color: #C00; 
- cursor: pointer; 
- height: 14px; 
- width: 13px; 
-} 
-.close:hover { 
- background: #C00; 
- color: #FFF; 
 }

@@ -41,41 +41,47 @@ func AzimuthsFromQRA(qra1 string, qra2 string) (int, int) {
 func Azimuths(lat1, long1, lat2, long2 float64) (int, int) {
 
 	//var EarthRadius float64 = 6372795.0			// Радиус Земли в метрах
-
-	// В радианы
-	lat1 = DegreesToRadians(lat1)
-	lat2 = DegreesToRadians(lat2)
-	long1 = DegreesToRadians(long1)
-	long2 = DegreesToRadians(long2)
-
-	// Косинусы и синусы широт и разницы долгот
-	cosLat1 := math.Cos(lat1)
-	cosLat2 := math.Cos(lat2)
-	sinLat1 := math.Sin(lat1)
-	sinLat2 := math.Sin(lat2)
-	longDelta := long2 - long1
-	cosLongDelta := math.Cos(longDelta)
-	sinLongDelta := math.Sin(longDelta)
-
-	// Начальный азимут
-	x := cosLat1 * sinLat2 - sinLat1 * cosLat2 * cosLongDelta
-	y := sinLongDelta * cosLat2
-	z := RadiansToDegrees(math.Atan(-y/x))
-
-	if x < 0 {
-		z = z + 180.0
-	}
-	var z2 float64 = float64(int(z + 180.0) % 360 - 180)
-	z2 = -1 * DegreesToRadians(z2)
-
-	var azimuth int = int(RadiansToDegrees(z2 - (2*math.Pi*math.Floor(z2/(2*math.Pi)))))
+	var azimuth int
 	var reverseBearing int
-	if azimuth < 180 {
-		reverseBearing = azimuth + 180
-	} else {
-		reverseBearing = azimuth - 180
-	}
 
+	if (lat1 == 0 && long1 == 0) || (lat2 == 0 && long2 == 0) {
+		azimuth = -1
+	} else {
+
+		// В радианы
+		lat1 = DegreesToRadians(lat1)
+		lat2 = DegreesToRadians(lat2)
+		long1 = DegreesToRadians(long1)
+		long2 = DegreesToRadians(long2)
+
+		// Косинусы и синусы широт и разницы долгот
+		cosLat1 := math.Cos(lat1)
+		cosLat2 := math.Cos(lat2)
+		sinLat1 := math.Sin(lat1)
+		sinLat2 := math.Sin(lat2)
+		longDelta := long2 - long1
+		cosLongDelta := math.Cos(longDelta)
+		sinLongDelta := math.Sin(longDelta)
+
+		// Начальный азимут
+		x := cosLat1*sinLat2 - sinLat1*cosLat2*cosLongDelta
+		y := sinLongDelta * cosLat2
+		z := RadiansToDegrees(math.Atan(-y / x))
+
+		if x < 0 {
+			z = z + 180.0
+		}
+		var z2 float64 = float64(int(z+180.0)%360 - 180)
+		z2 = -1 * DegreesToRadians(z2)
+
+		azimuth = int(RadiansToDegrees(z2 - (2 * math.Pi * math.Floor(z2/(2*math.Pi)))))
+
+		if azimuth < 180 {
+			reverseBearing = azimuth + 180
+		} else {
+			reverseBearing = azimuth - 180
+		}
+	}
 	return azimuth, reverseBearing
 }
 
@@ -83,14 +89,19 @@ func Azimuths(lat1, long1, lat2, long2 float64) (int, int) {
 // Вычисляет QRB в километрах между двумя точками с координатами в градусах.
 func QRBFromDegrees(lat1, long1, lat2, long2 float64) int {
 
-	k1 := math.Cos(DegreesToRadians(lat1)) *
-			math.Cos(DegreesToRadians(lat2)) *
-			math.Cos(DegreesToRadians(math.Abs(long1-long2)))
+	var qrb float64
+	if (lat1 == 0 && long1 == 0) || (lat2 == 0 && long2 == 0) {
+		qrb = 0
+	} else {
 
-	k2 := math.Sin(DegreesToRadians(lat1)) * math.Sin(DegreesToRadians(lat2))
+		k1 := math.Cos(DegreesToRadians(lat1)) *
+			  math.Cos(DegreesToRadians(lat2)) *
+			  math.Cos(DegreesToRadians(math.Abs(long1-long2)))
 
-	qrb := 111.25 * RadiansToDegrees(math.Acos(k1 + k2))
+		k2 := math.Sin(DegreesToRadians(lat1)) * math.Sin(DegreesToRadians(lat2))
 
+		qrb = 111.25 * RadiansToDegrees(math.Acos(k1+k2))
+	}
 	return int(qrb)
 }
 
@@ -149,8 +160,13 @@ func QraToLatLong(qra string) (float64, float64) {
 		"Q": 1.3750, "R": 1.4583, "S": 1.5417, "T": 1.6250, "U": 1.7083, "V": 1.7917, "W": 1.8750, "X": 1.9583,
 	}
 
-	lat = latMap1[strings.ToUpper(qra[1:2])] + latMap2[qra[3:4]] + latMap3[strings.ToUpper(qra[5:6])]
-	long = longMap1[strings.ToUpper(qra[0:1])] + longMap2[qra[2:3]] + longMap3[strings.ToUpper(qra[4:5])]
 
+	if CheckQRA(qra) != nil {
+		lat = 0			// При некорректном QRA участника
+		long = 0
+	} else {
+		lat = latMap1[strings.ToUpper(qra[1:2])] + latMap2[qra[3:4]] + latMap3[strings.ToUpper(qra[5:6])]
+		long = longMap1[strings.ToUpper(qra[0:1])] + longMap2[qra[2:3]] + longMap3[strings.ToUpper(qra[4:5])]
+	}
 	return lat, long
 }

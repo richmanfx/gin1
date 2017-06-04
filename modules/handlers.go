@@ -8,6 +8,7 @@ import (
 	"github.com/tebeka/selenium"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -69,24 +70,23 @@ func scrapVhfdx(context *gin.Context, link string, myQRA string)  {
 	} else {
 
 		var webDriver selenium.WebDriver
-
+		var caps selenium.Capabilities = make(selenium.Capabilities, 2)
 		var browser string
-		browser = "phantom" // Закомментировать для запуска chrome
-		var caps selenium.Capabilities
+		var osType string
+
+		browser = "phantom" 		// Закомментировать для запуска из-под chrome
+		osType = runtime.GOOS
 
 		if browser == "phantom" {
-			caps = selenium.Capabilities{
-				"browserName":           "phantomjs",
-				//"phantomjs.binary.path": "/usr/local/bin/phantomjs",			// Linux
-				"phantomjs.binary.path": "C:\\Windows\\phantomjs.exe",		// Windows
-			}
+			caps["browserName"] = "phantomjs"
 		} else {
-			caps = selenium.Capabilities{
-				"browserName":            "firefox",
-				//"webdriver.gecko.driver": "/usr/local/bin/geckodriver",							// Linux
-				"webdriver.gecko.driver": "C:\\Program Files\\mozilla\\geckodriver.exe",		// Windows
+			caps["browserName"] = "firefox"
+		}
 
-			}
+		if osType == "linux" {
+			caps["phantomjs.binary.path"] = "/usr/local/bin/phantomjs"		// Linux
+		} else {
+			caps["phantomjs.binary.path"] = "C:\\Windows\\phantomjs.exe"	// Windows
 		}
 
 		webDriver, err = selenium.NewRemote(caps, "")
@@ -170,7 +170,7 @@ func scrapVhfdx(context *gin.Context, link string, myQRA string)  {
 				}
 				if err != nil {
 					log.Info("Не отобразилась следующая страница.")
-					panic(err)
+					panic(err)		// TODO: Выводить в браузер культурное сообщение 
 				}
 
 			} else {

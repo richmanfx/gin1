@@ -144,8 +144,10 @@ label {
     padding-right: 2rem;
 }
 */
+
 input {
-    font-size: 2em;
+    font-size: 1.5em;
+    width: 20em;
 }
 
 

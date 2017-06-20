@@ -6,8 +6,9 @@
         <form name="fd_form" method="post" action="/go/fd">
             <fieldset>
                 <legend>Полевой день</legend>
-                <input autofocus="true" id="id_my_qra_fd" maxlength="6" name="my_qra_fd"
+                <input autofocus="true" id="id_my_qra_fd" maxlength="6" width="40" name="my_qra_fd"
                        placeholder=" Введи свой квадрат QRA" required="required" type="text">
+                <br><br>
                 <button class="btn btn-success field-day" data-toggle="modal" data-target="#msgModal" href="#">
                    Получить список участников
                 </button>
@@ -16,17 +17,17 @@
 
     <br><hr><br>
 
-    <form name="cup_form" method="post" action="/go/russia-cup">
-        <fieldset>
-            <legend>Чемпионат России</legend>
-            <input autofocus="true" id="id_my_qra_cup" maxlength="6" name="my_qra_cup"
-                   placeholder=" Введи свой квадрат QRA" required="required" type="text">
-            <button class="btn btn-success russian-cup" data-toggle="modal" data-target="#msgModal" href="#">
-                Получить список участников
-            </button>
+    <!--<form name="cup_form" method="post" action="/go/russia-cup">-->
+        <!--<fieldset>-->
+            <!--<legend>Чемпионат России</legend>-->
+            <!--<input autofocus="true" id="id_my_qra_cup" maxlength="6" name="my_qra_cup"-->
+                   <!--placeholder=" Введи свой квадрат QRA" required="required" type="text">-->
+            <!--<button class="btn btn-success russian-cup" data-toggle="modal" data-target="#msgModal" href="#">-->
+                <!--Получить список участников-->
+            <!--</button>-->
 
-        </fieldset>
-    </form>
+        <!--</fieldset>-->
+    <!--</form>-->
 
 
 <!-- Шаблон футера -->

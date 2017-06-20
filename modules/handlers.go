@@ -31,7 +31,7 @@ func showIndexPage(context *gin.Context)  {
 
 // Обрабатывает страницу Полевого дня
 func fieldDayContestant(context *gin.Context)  {
-	link := "http://www.vhfdx.ru/component/option,com_fabrik/Itemid,307/"
+	link := "http://www.vhfdx.ru/component/option,com_fabrik/Itemid,312/"
 	myQRA := context.PostForm("my_qra_fd")		// Квадрат из формы
 	log.Infof("Получен myQRA: %s", myQRA)
 	scrapVhfdx(context, link, myQRA)
